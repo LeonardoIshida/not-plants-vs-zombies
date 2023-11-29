@@ -9,6 +9,11 @@
 
 using namespace std;
 
+// TO-DO:
+//  Modificar os sleeps, sincronizar
+//  Separar em mais threads
+//  
+
 vector<vector<int>> tabuleiro(5, vector<int>(40, 0));
 vector<pair<int, int>> zumbis;
 vector<pair<int, int>> balas;
