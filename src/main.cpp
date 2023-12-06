@@ -15,8 +15,8 @@ using namespace std;
 //  
 
 vector<vector<int>> tabuleiro(5, vector<int>(40, 0));
-vector<pair<int, int>> zumbis;
-vector<pair<int, int>> balas;
+vector<vector<int>> zumbis(5, vector<int>(40, 0));
+vector<vector<int>> balas(5, vector<int>(40, 0));
 mutex mtx;
 mutex mtx_zumbi;
 mutex mtx_bala;
@@ -34,92 +34,96 @@ void atualizarTabuleiro() {
         {
             lock_guard<mutex> lock(mtx);
             
-            // Verificar colisões
-            
-
             clear();  // Limpar tela
 
             for (int i = 0; i < LINES; i++) {
-                for (int j = 1; j < COLS; j++)
-                    mvprintw(i, j, "%d", tabuleiro[i][j-1]);
+                for (int j = 1; j < COLS; j++) {
+                    mvprintw(i, j, "%d", tabuleiro[i][j]);
+                }
             }
-
+            
             // Desenhar as armas
             for (int i = 0; i < LINES; i++) {
-                mvprintw(i, 0, "L");
+                mvprintw(i, 0, ">");
             }
 
             refresh();  // Atualizar a tela
         }
 
         // Aguarde um curto período para evitar alta taxa de atualização
-        this_thread::sleep_for(chrono::milliseconds(100));
+        this_thread::sleep_for(chrono::milliseconds(50));
     }
 }
 
-void controleArma() {
+void verificaColisao() {
 
-    int ch, x = 0, y = 0;
     while (true) {
         {
-            ch = getch();
-                
-            if (ch != ERR) {
-                lock_guard<mutex> lock(mtx);
-                lock_guard<mutex> lock_b(mtx_bala);
+            lock_guard<mutex> lock(mtx);
+            lock_guard<mutex> lock_b(mtx_bala);
+            lock_guard<mutex> lock_z(mtx_zumbi);
 
-                switch (ch) {
-                    case 'q':
-                        balas.push_back(make_pair(0, 0));
-                        tabuleiro[0][0] -= 1;
-                        break;
-                    case 'w':
-                        balas.push_back(make_pair(1, 0));
-                        tabuleiro[1][0] -= 1;
-                        break;
-                    case 'e':
-                        balas.push_back(make_pair(2, 0));
-                        tabuleiro[2][0] -= 1;
-                        break;
-                    case 'r':
-                        balas.push_back(make_pair(3, 0));
-                        tabuleiro[3][0] -= 1;
-                        break;
-                    case 't':
-                        balas.push_back(make_pair(4, 0));
-                        tabuleiro[4][0] -= 1;
-                        break;
+            for (int i = 0; i < LINES; i++) {
+                for (int j = 1; j < COLS; j++) {
+                    // Colidiu
+                    if (balas[i][j] + zumbis[i][j] == 0) {
+                        balas[i][j] = 0;
+                        zumbis[i][j] = 0; 
+                    }
+                    // Atualiza
+                    tabuleiro[i][j] = balas[i][j] + zumbis[i][j];
                 }
             }
         }
 
-        // Aguarde um curto período para evitar alta taxa de atualização
-        this_thread::sleep_for(chrono::milliseconds(50));
+        this_thread::sleep_for(chrono::seconds(1));   
+    }
 
+}
+
+void controleArma() {
+    int ch, x = 0, y = 0;
+    while (true) {
         {
-            lock_guard<mutex> lock(mtx);
             lock_guard<mutex> lock_b(mtx_bala);
+            // lock_guard<mutex> lock(mtx);
+            ch = getch();
+                
+            if (ch != ERR) {
 
-            // Movendo as balas
-            for (pair<int, int> &pos : balas) {
-                tabuleiro[pos.first][pos.second] += 1;
-                pos.second += 1;
-                tabuleiro[pos.first][pos.second] -= 1;
+                switch (ch) {
+                    case 'q':
+                        // balas.push_back(make_pair(0, 0));
+                        balas[0][1] -= 1;
+                        break;
+                    case 'w':
+                        // balas.push_back(make_pair(1, 0));
+                        balas[1][1] -= 1;
+                        break;
+                    case 'e':
+                        // balas.push_back(make_pair(2, 0));
+                        balas[2][1] -= 1;
+                        break;
+                    case 'r':
+                        // balas.push_back(make_pair(3, 0));
+                        balas[3][1] -= 1;
+                        break;
+                    case 't':
+                        // balas.push_back(make_pair(4, 0));
+                        balas[4][1] -= 1;
+                        break;
+                }
             }
         }
-
-        this_thread::sleep_for(chrono::seconds(1));
-        
     }
 }
 
 
-void controleZumbis() {
+void criaZumbis() {
     int baseDoZumbi = COLS - 1;
 
     while (true) {
         {
-            lock_guard<mutex> lock(mtx);
             lock_guard<mutex> lock_z(mtx_zumbi);
             
             // Criando zumbi novos
@@ -127,23 +131,62 @@ void controleZumbis() {
                 // Usando booleano aleatório
                 if (randBool()) {
                     // Spawna zumbi na linha i na base
-                    zumbis.push_back(make_pair(i, baseDoZumbi));
+                    zumbis[i][baseDoZumbi] = 1;
                 }
             }
         }
 
         // Aguarde um curto período antes de criar mais zumbis
         this_thread::sleep_for(chrono::seconds(2));
+    }
+}
 
+void moveZumbi() {
+    
+    while (true) {
         {
-            lock_guard<mutex> lock(mtx);
             lock_guard<mutex> lock_z(mtx_zumbi);
 
             // Movendo todos os zumbis uma coluna para a esquerda
-            for (pair<int, int> &pos : zumbis) {
-                tabuleiro[pos.first][pos.second] -= 1;
-                pos.second -= 1;
-                tabuleiro[pos.first][pos.second] += 1;
+            for (int i = 0; i < LINES; i++) {
+                for (int j = 1; j < COLS-1; j++) {
+                    // Swap
+                    int aux = zumbis[i][j+1];
+                    zumbis[i][j+1] = zumbis[i][j];
+                    zumbis[i][j] = aux;
+                }
+                // tabuleiro[pos.first][pos.second] += 1;
+                // if (pos.second + 1 < LINES) {
+                //     pos.second += 1;
+                //     tabuleiro[pos.first][pos.second] -= 1;
+                // }
+            }
+        }
+
+        this_thread::sleep_for(chrono::seconds(2));
+    }
+}
+
+void moveBala() {
+    
+    while (true) {
+        {
+            // lock_guard<mutex> lock(mtx);
+            lock_guard<mutex> lock_b(mtx_bala);
+
+            // Movendo as balas
+            for (int i = 0; i < LINES; i++) {
+                for (int j = COLS-1; j >= 1; j--) {
+                    // Swap
+                    int aux = balas[i][j-1];
+                    balas[i][j-1] = balas[i][j];
+                    balas[i][j] = aux;
+                }
+                // tabuleiro[pos.first][pos.second] += 1;
+                // if (pos.second + 1 < LINES) {
+                //     pos.second += 1;
+                //     tabuleiro[pos.first][pos.second] -= 1;
+                // }
             }
         }
 
@@ -162,12 +205,18 @@ int main() {
     // Threads para controle
     thread threadTabuleiro(atualizarTabuleiro);
     thread threadArma(controleArma);
-    thread threadZumbis(controleZumbis);
-
+    thread threadCria(criaZumbis);
+    thread threadBala(moveBala);
+    thread threadMove(moveZumbi);
+    thread threadColisao(verificaColisao);
+    
     // Aguarde threads terminarem
     threadTabuleiro.join();
     threadArma.join();
-    threadZumbis.join();
+    threadCria.join();
+    threadBala.join();
+    threadMove.join();
+    threadColisao.join();
 
     endwin();  // Encerrar ncurses
 
