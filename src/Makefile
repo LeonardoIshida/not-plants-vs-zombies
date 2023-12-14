@@ -2,7 +2,7 @@ all:
 	g++ -o main main.cpp -lncurses
 
 clean:
-	rm main
+	rm main 
 
 run:
 	./main
