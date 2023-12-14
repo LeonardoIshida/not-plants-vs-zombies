@@ -1,6 +1,6 @@
 // Trabalho Prático
 // SSC0140 - Sistemas Operacionais
-// Professora Kalinka Regina Lucas Jaquie Castelo Branco
+// Professora: Kalinka Regina Lucas Jaquie Castelo Branco
 
 // Grupo:
 // Leonardo Ishida - 12873424
@@ -41,6 +41,7 @@ bool randBool() {
 void atualizarTabuleiro() {
     while (rodandoJogo) {
         {
+            // Bloquear acesso as demais threads
             unique_lock<mutex> lock_b(mtx_bala);
             unique_lock<mutex> lock_z(mtx_zumbi);
 
@@ -103,9 +104,10 @@ void atualizarTabuleiro() {
 }
 
 void controleArma() {
-    int ch, x = 0, y = 0;
+    int ch;
     while (rodandoJogo) {
         {
+            // Bloquear acesso as demais threads
             unique_lock<mutex> lock_b(mtx_bala);
             
             ch = getch();
@@ -141,6 +143,7 @@ void criaZumbis() {
 
     while (rodandoJogo) {
         {
+            // Bloquear acesso as demais threads
             unique_lock<mutex> lock_z(mtx_zumbi);
             
             // Criando zumbi novos
@@ -164,6 +167,7 @@ void movePecas() {
     
     while (rodandoJogo) {
         {
+            // Bloquear acesso as demais threads
             unique_lock<mutex> lock_z(mtx_zumbi);
 
             // Movendo todos os zumbis uma coluna para a esquerda
@@ -199,12 +203,13 @@ void movePecas() {
 }
 
 int main() {
+
     initscr(); // Inicializar ncurses
     resize_term(7, 51); // Tamanho da tela
     timeout(0); // Tornar a entrada não bloqueante
     keypad(stdscr, TRUE); // Ativar leitura de teclas especiais
-    noecho();
-    curs_set(0);
+    noecho(); // Nao printar input na tela
+    curs_set(0); // Nao aparecer o cursor a tela
 
     // Threads para controle
     thread threadTabuleiro(atualizarTabuleiro);
@@ -212,7 +217,7 @@ int main() {
     thread threadCria(criaZumbis);
     thread threadMove(movePecas);
     
-    // Aguarde threads terminarem
+    // Fazendo threads funcionarem
     threadTabuleiro.join();
     threadArma.join();
     threadCria.join();
