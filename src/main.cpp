@@ -94,8 +94,9 @@ void atualizarTabuleiro() {
 
             refresh();  // Atualizar a tela
 
+            // Desbloquear acesso 
             lock_b.unlock();
-            lock_z.unlock();
+            lock_z.unlock(); 
         }
 
         // Aguarde um curto período para evitar alta taxa de atualização
@@ -132,7 +133,7 @@ void controleArma() {
                 }
             }
 
-            lock_b.unlock();
+            lock_b.unlock(); // Desbloquear acesso 
         }
     }
 }
@@ -155,7 +156,7 @@ void criaZumbis() {
                 }
             }
 
-            lock_z.unlock();
+            lock_z.unlock(); // Desbloquear acesso 
         }
 
         // Aguarde um curto período antes de criar mais zumbis
@@ -195,7 +196,7 @@ void movePecas() {
                     balas[i][j] = aux;
                 }
             }
-            lock_b.unlock();
+            lock_b.unlock(); // Desbloquear acesso 
         }
 
         this_thread::sleep_for(chrono::seconds(1));
