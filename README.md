@@ -33,12 +33,12 @@ cd plants-vs-zombies && make
 make run
 ```
 ### 🔫 Comandos
-Os síbolos '>' representam as armas utilizadas para atirar nos zumbis, e cada arma é ativada por uma tecla  
-'Q': atirar  na primeira linha  
-'W': atirar  na segunda linha  
-'E': atirar  na terceira linha  
-'R': atirar  na quarta linha  
-'T': atirar  na quinta linha  
+Os síbolos '>' representam as armas utilizadas para atirar nos zumbis, e cada arma é ativada por uma tecla:  
+- 'Q': atirar  na primeira linha  
+- 'W': atirar  na segunda linha  
+- 'E': atirar  na terceira linha  
+- 'R': atirar  na quarta linha  
+- 'T': atirar  na quinta linha  
 
 ### 🏆 Objetivos
 Conseguir obter a maior pontuação possível e não deixar os zumbis chegarem onde estão as armas.
