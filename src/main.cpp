@@ -178,7 +178,7 @@ void movePecas() {
                     zumbis[i][j+1] = zumbis[i][j];
                     zumbis[i][j] = aux;
                 }
-                if(zumbis[i][1] == 1){
+                if(zumbis[i][1] == 1) { // Perdeu
                     rodandoJogo = false;
                 }
             }
@@ -225,7 +225,7 @@ int main() {
 
     endwin(); // Encerrar ncurses
 
-    printf("Perdeu! Score foi: %d", score);
+    printf("Perdeu! Score foi: %d\n", score);
 
     return 0;
 }
