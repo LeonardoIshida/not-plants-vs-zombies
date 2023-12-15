@@ -26,7 +26,6 @@ Por fim, vamos compilar o jogo:
 cd plants-vs-zombies && make
 ```
 
-
 ## Como jogar ?
 ### 🎮 Iniciar o jogo
 ```
@@ -63,3 +62,6 @@ Agora, com as 4 funções sendo executadas 'ao mesmo tempo' e com auxílio das f
 Como o nosso programa é executado por várias threads ao mesmo tempo, estávamos enfrentando o problema de Race condition, em que várias threads estavam tentando acessar o mesmo espaço de memória. Dessa forma, foi de extrema importância utlizar mutex para coordenar os acessos às regiões críticas e não gerar resultados estranhos e inconsistentes.
 - Mutex zumbi: foi usado para gerenciar o acesso nas funções atualizarTabuleiro, criaZumbis e movePecas. Quando uma dessas funções é executada, precisamos garantir que as outras não acessem a matriz "zumbis", pois qualquer interferência poderia ocasionar no mau funcionamento do processo. Se, por exemplo, moverPecas e criaZumbis acessassem a mesma posição de memória ao mesmo tempo, teríamos problemas para saber se deveríamos adicionar zumbis em uma certa posição ou se deveríamos mover o conteúdo para 'frente'. Portanto, para resolver esse e outros problemas, utilizamos a classe unique_lock, que, quando utilizada sobre um mutex, bloqueia o acesso por outras threads até que seja feito um unlock. Então, antes de começarmos a manipular qualquer dado presente na matriz "zumbis", fizemos o unique_lock para efetuar o acesso seguro e não simultâneo da variável. Assim, garantimos que a função reproduza sempre o resultado desejado.
 - Mutex bala: foi usado para gerenciar o acesso nas funções atualizarTabuleiro, controleArma e movePecas. Aqui, temos o problema de que queremos receber o input do usuário, mas, ao mesmo tempo, precisamos mover as balas, que já estão no tabuleiro, para 'frente', e precisamos verificar as colisões entre as balas e os zumbis. Portanto, para gerenciar o acesso dessas 3 funções, também utilizamos aqui a classe unique_lock, para garantir que uma thread não atrapalhe o funcionamento das outras, bloqueando o acesso à variável, e ao terminar de executar a rotina, liberando o acesso com unlock para outras threads acessarem. Dessa maneira, conseguimos fazer com que o input do usuário ocorra 'instantâneamente' e não cause problemas para as funções que também têm que manipular informações presentes em "balas".
+
+## Link para o vídeo
+https://www.youtube.com/watch?v=9j03Oe1_E-I
