@@ -5,6 +5,10 @@ Trabalho Prático da disciplina: SSC0140 - Sistemas Operacionais I.
 O projeto propõe criar um jogo utilizando os conceitos vistos em aula acerca de threads e semáforos.
 Dessa forma, optamos por criar um trabalho inspirado no famoso jogo Plants vs Zombies.
 
+## 🤝 Contribuidores
+https://github.com/MiguelHenri <br>
+https://github.com/niicao
+
 ## Instalação
 Primeiramente, devemos instalar a biblioteca ncurses e o git:
 #### Ubuntu, Debian, Mint
