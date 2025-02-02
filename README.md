@@ -6,8 +6,8 @@ O projeto propõe criar um jogo utilizando os conceitos vistos em aula acerca de
 Dessa forma, optamos por criar um trabalho inspirado no famoso jogo Plants vs Zombies.
 
 ## 🤝 Contribuidores
-https://github.com/MiguelHenri <br>
-https://github.com/niicao
+[Miguel B. Henriques](https://github.com/MiguelHenri) <br>
+[Nicholas Y. Ikai](https://github.com/niicao)
 
 ## Instalação
 Primeiramente, devemos instalar a biblioteca ncurses e o git:
